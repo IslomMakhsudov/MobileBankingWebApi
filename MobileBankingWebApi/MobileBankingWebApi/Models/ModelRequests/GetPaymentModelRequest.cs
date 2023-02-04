@@ -4,7 +4,7 @@
     {
         public string Login { get; set; }
         public string Hash { get; set; }
-        public int TimeStamp { get; set; }
+        public string TimeStamp { get; set; }
         public int Type { get; set; }
     }
 }
