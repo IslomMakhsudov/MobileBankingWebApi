@@ -30,8 +30,9 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetPayments(modelRequest);
 
-            if (result == null)
-                return BadRequest();
+            if (result.ContainsKey("exception"))
+                return BadRequest(result);
+            
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -55,8 +56,8 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetTransactionStatus(modelRequest);
 
-            if(result == null) 
-                return BadRequest();
+            if (result.ContainsKey("exception"))
+                return BadRequest(result);
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -81,8 +82,8 @@ namespace MobileBankingWebApi.Controllers
 
             var result = await _transactionService.CreatePayment(modelRequest);
 
-            if(result == null)
-                return BadRequest();
+            if (result.ContainsKey("exception"))
+                return BadRequest(result);
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -105,8 +106,8 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetTransactionInfo(modelRequest);
 
-            if(result == null)
-                return BadRequest();
+            if (result.ContainsKey("exception"))
+                return BadRequest(result);
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {

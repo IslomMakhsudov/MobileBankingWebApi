@@ -16,7 +16,7 @@ namespace MobileBankingWebApi.Services
         {
             _staticData = staticData;
         }
-        public async Task<Dictionary<string, object>?> CreatePayment(PaymentModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> CreatePayment(PaymentModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -58,18 +58,22 @@ namespace MobileBankingWebApi.Services
 
                 return items;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
 
-                return null;
+                Dictionary<string, object> exception = new();
+
+                exception["exception"] = ex.Message;
+
+                return exception;
             }
         }
 
-        public async Task<Dictionary<string, object>?> GetPayments(GetPaymentListModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> GetPayments(GetPaymentListModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -119,18 +123,22 @@ namespace MobileBankingWebApi.Services
 
                 return modelResponse;
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 if(connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
 
-                return null;
+                Dictionary<string, object> exception = new();
+
+                exception["exception"] = ex.Message;
+
+                return exception;
             }
         }
 
-        public async Task<Dictionary<string, object>?> GetTransactionInfo(TransactionInfoModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> GetTransactionInfo(TransactionInfoModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -175,18 +183,22 @@ namespace MobileBankingWebApi.Services
 
                 return modelResponse;
             }
-            catch(Exception) 
+            catch(Exception ex) 
             {
                 if (connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
 
-                return null;
+                Dictionary<string, object> exception = new();
+
+                exception["exception"] = ex.Message;
+
+                return exception;
             }
         }
 
-        public async Task<Dictionary<string, object>?> GetTransactionStatus(TransactionStatusModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> GetTransactionStatus(TransactionStatusModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -218,14 +230,18 @@ namespace MobileBankingWebApi.Services
 
                 return items;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
 
-                return null;
+                Dictionary<string, object> exception = new();
+
+                exception["exception"] = ex.Message;
+
+                return exception;
             }
         }
     }
