@@ -72,13 +72,13 @@ namespace MobileBankingWebApi.Controllers
             }
         }
 
-        [Produces("application/xml")]
+
         [HttpPost("pay")]
-        [Consumes("application/xml")]
         [ProducesResponseType(typeof(PaymentModelResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseModel), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentModelRequest modelRequest)
         {
+
             var result = await _transactionService.CreatePayment(modelRequest);
 
             if(result == null)
