@@ -30,9 +30,8 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetPayments(modelRequest);
 
-            if (result.ContainsKey("exception"))
-                return BadRequest(result);
-            
+            if (result == null)
+                return BadRequest();
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -56,8 +55,8 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetTransactionStatus(modelRequest);
 
-            if (result.ContainsKey("exception"))
-                return BadRequest(result);
+            if(result == null) 
+                return BadRequest();
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -73,17 +72,17 @@ namespace MobileBankingWebApi.Controllers
             }
         }
 
-
+        [Produces("application/xml")]
         [HttpPost("pay")]
+        [Consumes("application/xml")]
         [ProducesResponseType(typeof(PaymentModelResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(BaseModel), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> CreatePayment([FromBody] PaymentModelRequest modelRequest)
         {
-
             var result = await _transactionService.CreatePayment(modelRequest);
 
-            if (result.ContainsKey("exception"))
-                return BadRequest(result);
+            if(result == null)
+                return BadRequest();
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {
@@ -106,8 +105,8 @@ namespace MobileBankingWebApi.Controllers
         {
             var result = await _transactionService.GetTransactionInfo(modelRequest);
 
-            if (result.ContainsKey("exception"))
-                return BadRequest(result);
+            if(result == null)
+                return BadRequest();
 
             if (HttpContext.Request.Headers["Accept"].ToString().ToLower() == "application/xml")
             {

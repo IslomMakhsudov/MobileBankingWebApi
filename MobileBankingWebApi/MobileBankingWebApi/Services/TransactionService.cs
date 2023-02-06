@@ -5,6 +5,7 @@ using System.Data;
 using System.Xml.Linq;
 using MobileBankingWebApi.Models;
 using System.Text.Json;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MobileBankingWebApi.Services
 {
@@ -38,25 +39,19 @@ namespace MobileBankingWebApi.Services
             {
                 await connection.OpenAsync();
                 using var reader = await command.ExecuteReaderAsync();
-                Dictionary<string, object>? items = null;
+                 
                 if (reader.HasRows)
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        try
-                        {
-                            items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
-                        }
-                        catch (IndexOutOfRangeException)
-                        {
+                    await reader.ReadAsync();
+                    
+                    Dictionary<string, object> items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
 
-                        }
-                    }
+                    return items;
                 }
                 await reader.CloseAsync();
                 await connection.CloseAsync();
 
-                return items;
+                throw new InvalidOperationException("Empty query result");
             }
             catch (Exception ex)
             {
@@ -65,11 +60,49 @@ namespace MobileBankingWebApi.Services
                     await connection.CloseAsync();
                 }
 
-                Dictionary<string, object> exception = new();
+                return CreateExceptionResult(ex.Message);
+            }
+        }
 
-                exception["exception"] = ex.Message;
+        public async Task<Dictionary<string, object>> GetPaymentBalance(PaymentBalanceModelRequest modelRequest)
+        {
+            using var connection = new SqlConnection(_staticData.ConnectionString);
 
-                return exception;
+            var query = "AGENT_API_Balance";
+
+            using var command = new SqlCommand(query, connection);
+            command.CommandType = CommandType.StoredProcedure;
+
+            command.Parameters.AddWithValue("@login", modelRequest.Login);
+            command.Parameters.AddWithValue("@hash", modelRequest.Hash);
+            command.Parameters.AddWithValue("@timestamp", modelRequest.TimeStamp);
+
+            try
+            {
+                await connection.OpenAsync();
+                using var reader = await command.ExecuteReaderAsync();
+
+                if (reader.HasRows)
+                {
+                    await reader.ReadAsync();
+
+                    Dictionary<string, object> items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
+
+                    return items;
+                }
+                await reader.CloseAsync();
+                await connection.CloseAsync();
+
+                throw new InvalidOperationException("Empty query result");
+            }
+            catch (Exception ex)
+            {
+                if (connection.State != ConnectionState.Closed)
+                {
+                    await connection.CloseAsync();
+                }
+
+                return CreateExceptionResult(ex.Message);
             }
         }
 
@@ -123,18 +156,14 @@ namespace MobileBankingWebApi.Services
 
                 return modelResponse;
             }
-            catch(Exception ex)
+            catch(Exception ex) 
             {
                 if(connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
 
-                Dictionary<string, object> exception = new();
-
-                exception["exception"] = ex.Message;
-
-                return exception;
+                return CreateExceptionResult(ex.Message);
             }
         }
 
@@ -190,11 +219,7 @@ namespace MobileBankingWebApi.Services
                     await connection.CloseAsync();
                 }
 
-                Dictionary<string, object> exception = new();
-
-                exception["exception"] = ex.Message;
-
-                return exception;
+                return CreateExceptionResult(ex.Message);
             }
         }
 
@@ -237,12 +262,18 @@ namespace MobileBankingWebApi.Services
                     await connection.CloseAsync();
                 }
 
-                Dictionary<string, object> exception = new();
-
-                exception["exception"] = ex.Message;
-
-                return exception;
+                return CreateExceptionResult(ex.Message);
             }
+        }
+
+        private static Dictionary<string, object> CreateExceptionResult(string exceptionMessage)
+        {
+            Dictionary<string, object> errorResult = new()
+            {
+                ["exceptionMessage"] = exceptionMessage
+            };
+
+            return errorResult;
         }
     }
 }

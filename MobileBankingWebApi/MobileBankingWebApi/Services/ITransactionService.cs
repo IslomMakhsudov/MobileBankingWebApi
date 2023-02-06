@@ -9,5 +9,6 @@ namespace MobileBankingWebApi.Services
         public Task<Dictionary<string, object>> CreatePayment(PaymentModelRequest modelRequest);
         public Task<Dictionary<string, object>> GetTransactionInfo(TransactionInfoModelRequest modelReqeust);
         public Task<Dictionary<string, object>> GetTransactionStatus(TransactionStatusModelRequest modelRequest);
+        public Task<Dictionary<string, object>> GetPaymentBalance(PaymentBalanceModelRequest modelRequest);
     }
 }

@@ -1,3 +1,4 @@
+using MobileBankingWebApi.Middleware;
 using MobileBankingWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ builder.Services.AddTransient<ITransactionService, TransactionService>();
 builder.Services.AddTransient<Decrypter>();
 builder.Services.AddSingleton<StaticData>();
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseSwagger();
 
