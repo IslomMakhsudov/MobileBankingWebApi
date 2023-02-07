@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Metadata.Ecma335;
 
-namespace MobileBankingWebApi.Models.ModelRequests
+namespace MobileBankingWebApi.Modules.Payment.ModelRequests
 {
     public class TransactionStatusModelRequest
     {

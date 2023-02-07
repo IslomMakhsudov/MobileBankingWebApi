@@ -1,8 +1,9 @@
 ﻿using System.Reflection.Metadata.Ecma335;
+using MobileBankingWebApi.Models;
 
-namespace MobileBankingWebApi.Models.ModelResponses
+namespace MobileBankingWebApi.Modules.Payment.ModelResponses
 {
-    public class PaymentModelResponse : BaseModel
+    public class PaymentModelResponse : BaseEntity
     {
         public int TransactionId { get; set; }
         public DateOnly? ServerAcceptedDate { get; set; }

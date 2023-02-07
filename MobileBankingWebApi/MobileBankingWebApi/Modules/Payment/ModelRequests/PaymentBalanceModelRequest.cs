@@ -1,4 +1,4 @@
-﻿namespace MobileBankingWebApi.Models.ModelRequests
+﻿namespace MobileBankingWebApi.Modules.Payment.ModelRequests
 {
     public class PaymentBalanceModelRequest
     {

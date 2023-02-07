@@ -1,4 +1,6 @@
 using MobileBankingWebApi.Middleware;
+using MobileBankingWebApi.Modules.Payment.Services;
+using MobileBankingWebApi.Modules.Terminal.Services;
 using MobileBankingWebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +13,8 @@ builder.Services.AddMvc()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<ITransactionService, TransactionService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<ITerminalService, TerminalService>();
 builder.Services.AddTransient<Decrypter>();
 builder.Services.AddSingleton<StaticData>();
 var app = builder.Build();

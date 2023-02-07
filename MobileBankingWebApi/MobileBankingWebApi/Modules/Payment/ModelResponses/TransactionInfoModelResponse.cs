@@ -1,4 +1,4 @@
-﻿namespace MobileBankingWebApi.Models.ModelResponses
+﻿namespace MobileBankingWebApi.Modules.Payment.ModelResponses
 {
     public class TransactionInfoModelResponse
     {

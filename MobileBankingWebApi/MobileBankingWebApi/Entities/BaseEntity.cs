@@ -1,6 +1,6 @@
 ﻿namespace MobileBankingWebApi.Models
 {
-    public class BaseModel
+    public class BaseEntity
     {
         public int Code { get; set; }
         public string? Message { get; set; }

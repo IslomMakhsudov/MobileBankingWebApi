@@ -1,19 +1,15 @@
-﻿using MobileBankingWebApi.Models.ModelRequests;
-using MobileBankingWebApi.Models.ModelResponses;
-using System.Data.SqlClient;
+﻿using System.Data.SqlClient;
 using System.Data;
-using System.Xml.Linq;
-using MobileBankingWebApi.Models;
-using System.Text.Json;
-using System.Reflection.Metadata.Ecma335;
+using MobileBankingWebApi.Services;
+using MobileBankingWebApi.Modules.Payment.ModelRequests;
 
-namespace MobileBankingWebApi.Services
+namespace MobileBankingWebApi.Modules.Payment.Services
 {
-    public class TransactionService : ITransactionService
+    public class PaymentService : IPaymentService
     {
         private readonly StaticData _staticData;
 
-        public TransactionService(StaticData staticData)
+        public PaymentService(StaticData staticData)
         {
             _staticData = staticData;
         }
@@ -39,11 +35,11 @@ namespace MobileBankingWebApi.Services
             {
                 await connection.OpenAsync();
                 using var reader = await command.ExecuteReaderAsync();
-                 
+
                 if (reader.HasRows)
                 {
                     await reader.ReadAsync();
-                    
+
                     Dictionary<string, object> items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
 
                     return items;
@@ -132,20 +128,15 @@ namespace MobileBankingWebApi.Services
                         modelResponse["Code"] = reader.GetInt32("Code");
                         modelResponse["Message"] = reader.GetString("Message");
 
-                        try
-                        {
-                            var result = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
+                      
+                        var result = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
 
-                            result.Remove("Code");
+                        result.Remove("Code");
 
-                            result.Remove("Message");
+                        result.Remove("Message");
 
-                            dataList.Add(result); 
-                        }
-                         catch (IndexOutOfRangeException) 
-                        {
+                        dataList.Add(result);
 
-                        }
 
                     }
                 }
@@ -156,9 +147,9 @@ namespace MobileBankingWebApi.Services
 
                 return modelResponse;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
-                if(connection.State != ConnectionState.Closed)
+                if (connection.State != ConnectionState.Closed)
                 {
                     await connection.CloseAsync();
                 }
@@ -167,7 +158,7 @@ namespace MobileBankingWebApi.Services
             }
         }
 
-        public async Task<Dictionary<string, object>> GetTransactionInfo(TransactionInfoModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> GetPaymentInfo(TransactionInfoModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -191,9 +182,9 @@ namespace MobileBankingWebApi.Services
                 List<Dictionary<string, object>> dataList = new();
                 if (reader.HasRows)
                 {
-                    while(await reader.ReadAsync())
+                    while (await reader.ReadAsync())
                     {
-                        
+
                         modelResponse["Code"] = reader.GetInt32("Code");
                         modelResponse["Message"] = reader.GetString("Message");
 
@@ -212,7 +203,7 @@ namespace MobileBankingWebApi.Services
 
                 return modelResponse;
             }
-            catch(Exception ex) 
+            catch (Exception ex)
             {
                 if (connection.State != ConnectionState.Closed)
                 {
@@ -223,7 +214,7 @@ namespace MobileBankingWebApi.Services
             }
         }
 
-        public async Task<Dictionary<string, object>> GetTransactionStatus(TransactionStatusModelRequest modelRequest)
+        public async Task<Dictionary<string, object>> GetPaymentStatus(TransactionStatusModelRequest modelRequest)
         {
             using var connection = new SqlConnection(_staticData.ConnectionString);
 
@@ -241,19 +232,20 @@ namespace MobileBankingWebApi.Services
             {
                 await connection.OpenAsync();
                 using var reader = await command.ExecuteReaderAsync();
-                Dictionary<string, object>? items = null;
+                
                 if (reader.HasRows)
                 {
-                    items = new();
-                    while (await reader.ReadAsync())
-                    {
-                        items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
-                    }
+                    
+                    await reader.ReadAsync();
+
+                    Dictionary<string, object> items = Enumerable.Range(0, reader.FieldCount).ToDictionary(reader.GetName, reader.GetValue);
+                    
+                    return items;
                 }
                 await reader.CloseAsync();
                 await connection.CloseAsync();
 
-                return items;
+                throw new InvalidOperationException("Empty query result");
             }
             catch (Exception ex)
             {
